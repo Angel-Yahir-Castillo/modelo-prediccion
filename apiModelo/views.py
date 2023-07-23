@@ -1,15 +1,23 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-import numpy as np
-from keras.models import load_model
+#from keras.models import load_model
 import json   
-model = load_model('apiModelo/modelo.h5')
+import pickle
+
+#model = load_model('apiModelo/modelo.h5')
 
 @csrf_exempt
 def predict_api(request):
     if request.method == 'POST':
         try:
+            with open('apiModelo/modelo.pkl', 'rb') as file:
+                model = pickle.load(file)
+
+            # Imprimir información sobre el modelo
+            print("Tipo de modelo cargado:", type(model))
+            print("Detalles del modelo:", model)
+            
             #recibimos los datos como json
             data = json.loads(request.body)
             
@@ -21,10 +29,10 @@ def predict_api(request):
             prediction = model.predict([data_array])
             
             #imprimimos el resultado en consola
-            print("Prediccion:", prediction[0][0])
+            print("Prediccion:", prediction)
             
             # Devuelve la predicción en la respuesta JSON
-            return JsonResponse({'prediction': str(prediction[0][0])})  # Convierte el valor de predicción a un tipo nativo de Python
+            return JsonResponse({'prediction': str(prediction)})#antes prediccion[0][0]  # Convierte el valor de predicción a un tipo nativo de Python
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)  # Devuelve un mensaje de error con información sobre la excepción
     else:
