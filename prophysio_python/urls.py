@@ -23,4 +23,5 @@ from apiModelo import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('predict/', views.predict_api, name='predict_api'),
+    path('predictKeras/', views.predict_api_keras, name='predict_api_keras'),
 ] + static(settings.STATIC_URL,document_root=settings.STATIC_ROOT)
